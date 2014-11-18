@@ -7,13 +7,13 @@ import sqlalchemy
 import random
 from monPackage.accesDB import table_morceaux, engine as connect
 
-#Définition d'une variable regroupant un ensemble d'arguments
+#Définition d'une variable regroupant l'ensemble d'arguments pouvant être saisi par l'utilisateur
 argument_cli = ['genre','artiste','album','titre']
 
 #Définition de la playlist
 playlist =[]
 
-#Fonction permettant de récupérer des données dans la BDD par rapport aux besoins de l'utilisateur
+#Fonction permettant de créer la requete et récupérer des données dans la BDD par rapport aux besoins de l'utilisateur
 def recupererDonnees(args):
     for attribut in argument_cli:
         if getattr(args, attribut) is not None:
@@ -25,14 +25,14 @@ def recupererDonnees(args):
                 #Si l'utilisateur a saisi un ou plusieurs artistes
                 if (attribut == 'artiste'):
                     RecuperationDonnees = sqlalchemy.select([table_morceaux]).where(table_morceaux.c.artiste == argument[0])
-               #Si l'utilisateur a saisi un ou plusieurs albums
+                #Si l'utilisateur a saisi un ou plusieurs albums
                 if (attribut == 'album'):
                     RecuperationDonnees = sqlalchemy.select([table_morceaux]).where(table_morceaux.c.album == argument[0])
-               #Si l'utilisateur a saisi un ou plusieurs titres
+                #Si l'utilisateur a saisi un ou plusieurs titres
                 if (attribut== 'titre'):
                     RecuperationDonnees = sqlalchemy.select([table_morceaux]).where(table_morceaux.c.titre == argument[0])
 
-                # connectection à la BDD puis execution de la requète
+                # connection à la BDD puis execution de la requète
                 recuperation = connect.execute(RecuperationDonnees)
                 #Insertion des données récuperées dans un list
                 recuperation = list(recuperation)
@@ -62,11 +62,14 @@ def generationPlaylist(args):
                 for musique in argument[2]: # Pour chaque musique dans la playlist on insére le titre, l'artiste, l'album, le format et le chemin
                     playlist.insert(i, [musique[0], musique[2], musique[1], musique[5], musique[8]])
                     i += 1
-    random.shuffle(playlist) #On mélange les musiques aléatoirement
+    #Mélange les musiques aléatoirement
+    random.shuffle(playlist)
 
 def Playlist(args):
-    duree = 0 #initialisation à 0
-    for musique in playlist: #Pour chaque musique dans la playlist selon un genre précis
+    #Définition de la duree en cours de la playlist généré et initialisation à 0
+    duree = 0
+    #Pour chaque ligne de playlist on va ajouter le temps de la musique à duree
+    for musique in playlist:
         duree += musique[3]
 
     if(duree < args.temps*60): #Si la duree de la musique est inférieur à la durée totale demandée par l'utilisateur on effectue la requête permettant d'aller chercher des musiques alétoirement dans la base correspondant au genre
