@@ -42,6 +42,7 @@ def creationFichierpls(nom, ext, result):
     i=1
     fichier=io.open(nom + "." + ext,'w')
     fichier.write("[playlist]\n\n")
+    #Parcours le résultat pour chaque ligne
     for row in result:
         fichier.write("File"+ str(i) +"="+ row[4] +"\n")
         fichier.write("Title"+ str(i) +"="+ row[0] + "\n")

@@ -80,21 +80,28 @@ def Playlist(args):
     for musique in playlist:
         duree += musique[3]
 
-''''Si la duree de la musique est inférieur à la durée demandée par l'utilisateur on effectue la requête
-permettant d'aller chercher des musiques alétoirement dans la base correspondant au genre'''
+#Si la duree de la musique est inférieur à la durée demandée par l'utilisateur,
+#une requête va permettre d'aller chercher des musiques alétoirement dans la BDD
     if(duree < args.temps*60):
         select_morceaux = sqlalchemy.select([table_morceaux])
         resultat = connect.execute(select_morceaux)
         resultat = list(resultat)
         random.shuffle(resultat)
 
+    #Initialisation de i au nombre de ligne de la liste playlist
     i=len(playlist)
+
+    #Pour chaque ligne de résultat
     for musique in resultat:
-        duree += musique[5] #
+        #Ajout de a la durée de la ligne (musique) à la durée de la playlist en cours de création
+        duree += musique[5]
+        #Si la durée de la playlist en cours de création, on va insérer la ligne dans la liste playlist
         if(duree < args.temps*60):
             playlist.insert(i, [musique[0], musique[2], musique[1], musique[5], musique[8]])
             i += 1
+        #Sinon on enlève la durée de la ligne à la durée de la playlist en cours de création
         else:
             duree -= musique[5]
 
+    #On va retourner la playlist créée
     return playlist

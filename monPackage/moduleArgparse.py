@@ -15,7 +15,6 @@ def fonctionArgparse():
 
     '''argument optionnel'''
     parser.add_argument("-G", "--genre", help="genre et pourcentage du genre voulu dans la playlist", nargs=2, action="append")
-    #parser.add_argument("-g", "--sousgenre", help="sous genre et pourcentage du sous genre voulu dans la playlist", nargs=2, action="append")
     parser.add_argument("-A", "--artiste", help="artiste et pourcentage de l'artiste voulu dans la playlist", nargs=2, action="append")
     parser.add_argument("-a", "--album", help="album voulu dans la playlist", action="append")
     parser.add_argument("-t", "--titre", help="titre voulu dans la playlist", action="append")
