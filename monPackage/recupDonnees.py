@@ -41,25 +41,33 @@ def recupererDonnees(args):
 
                 #Rajoute une liste au 3eme rang de la liste argument
                 argument.insert(2,[])
-                i=0   #Initialisation de la valeur à 0
-                duree = 0 #Initialisation de la valeur à 0
+                #Initialisation de la valeur i à 0 pour la prochaine boucle for
+                i=0
+                #Initialisation de la valeur durée à 0 pour connaitre la duée de la playlist en cours de création
+                duree = 0
 
-                for champBDD in recuperation: #Pour chaque musique recuperer dans la liste, on vérifie la durée afin de correspondre au mieux au demande de l'utilisateur
-                    duree += champBDD[5]  #Correspond au champ durée dans la BDD
-                    if(duree < argument[1]*60): #Si durée inf. à durée demandé par utilisateur + conversion en minutes
+                #Boucle qui va permettre de combler la playlist s'l reste assez de temps pour une ou plusieurs musiques
+                for champBDD in recuperation:
+                    #Ajoute la durée de la musique à la durée de la playlist en cours de créationn
+                    duree += champBDD[5]
+                    #Si durée de la playlist en cours de création est inférieur à la durée demandé par utilisateur
+                    if(duree < argument[1]*60):
+                        #Insertion de la musique dans la playlist
                         argument[2].insert(i, champBDD)
                         i += 1
+                    #Sinon suppression de la durée de la musique anciennement ins
                     else:
-                        duree -= champBDD[5] #Correspond au champ durée dans la BDD
+                        duree -= champBDD[5]
 
 
-#Génération de la liste de playlist
+#Génération de la liste pour la playlist
 def generationPlaylist(args):
     i = 0
     for attribut in argument_cli:
         if getattr(args, attribut) is not None:
             for argument in getattr(args, attribut):
-                for musique in argument[2]: # Pour chaque musique dans la playlist on insére le titre, l'artiste, l'album, le format et le chemin
+                # Pour chaque musique dans la playlist on insére le titre, l'artiste, l'album, le format et le chemin
+                for musique in argument[2]:
                     playlist.insert(i, [musique[0], musique[2], musique[1], musique[5], musique[8]])
                     i += 1
     #Mélange les musiques aléatoirement
@@ -68,11 +76,13 @@ def generationPlaylist(args):
 def Playlist(args):
     #Définition de la duree en cours de la playlist généré et initialisation à 0
     duree = 0
-    #Pour chaque ligne de playlist on va ajouter le temps de la musique à duree
+    #Pour chaque ligne de playlist on va ajouter le temps de la musique à la duree
     for musique in playlist:
         duree += musique[3]
 
-    if(duree < args.temps*60): #Si la duree de la musique est inférieur à la durée totale demandée par l'utilisateur on effectue la requête permettant d'aller chercher des musiques alétoirement dans la base correspondant au genre
+''''Si la duree de la musique est inférieur à la durée demandée par l'utilisateur on effectue la requête
+permettant d'aller chercher des musiques alétoirement dans la base correspondant au genre'''
+    if(duree < args.temps*60):
         select_morceaux = sqlalchemy.select([table_morceaux])
         resultat = connect.execute(select_morceaux)
         resultat = list(resultat)
