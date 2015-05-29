@@ -1,7 +1,7 @@
 '''
 Created on 18 nov. 2014
 
-@author: etudiant
+@author: Baptiste 'MagiKarpe' Deslaurier, ClÈment 'cLESE' Sebillet
 '''
 import sqlalchemy
 import random
@@ -15,6 +15,12 @@ playlist =[]
 
 #Fonction permettant de cr√©er la requete et r√©cup√©rer des donn√©es dans la BDD par rapport aux besoins de l'utilisateur
 def recupererDonnees(args):
+    '''
+    On recherche dans la base les morceaux correspondant ‡ un argument et a sa valeur
+    @param args: ensemble des arguments possibles de la ligne de commande (ex: ('g', "genre"),('ar', "artiste"))
+    @param valeurRechercher:valeur saisie par l'utilisateur pour un argument (ex: Rock)
+    @param arg: l'argument pour lequel on recherche la valeur (ex: g)
+    '''
     for attribut in argument_cli:
         if getattr(args, attribut) is not None:
             for argument in getattr(args, attribut):
@@ -62,6 +68,10 @@ def recupererDonnees(args):
 
 #G√©n√©ration de la liste pour la playlist
 def generationPlaylist(args):
+    '''
+    GÈnÈration de la playlist
+    @param args : 
+    '''
     i = 0
     for attribut in argument_cli:
         if getattr(args, attribut) is not None:
@@ -74,6 +84,11 @@ def generationPlaylist(args):
     random.shuffle(playlist)
 
 def Playlist(args):
+    '''
+    CrÈation de la playlist avec les musique trouvÈ dans la BDD
+    @param args : 
+    @playlist est la playlist crÈer avec les morceaux ‡ chaque ligne sans format de fichier encore
+    '''
     #D√©finition de la duree en cours de la playlist g√©n√©r√© et initialisation √† 0
     duree = 0
     #Pour chaque ligne de playlist on va ajouter le temps de la musique √† la duree

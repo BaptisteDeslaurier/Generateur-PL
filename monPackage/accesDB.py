@@ -1,6 +1,13 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
+'''
+Created on 8 oct. 2014
+
+Connexion à la base Postgresql
+@author: Baptiste 'MagiKarpe' Deslaurier, Clément 'cLESE' Sebillet
+'''
+
 import sqlalchemy
 
 #Création de la variable engine initialisé avec la connexion à la BDD

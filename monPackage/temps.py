@@ -1,11 +1,15 @@
 '''
 Created on 12 nov. 2014
 
-@author: etudiant
+@author: Baptiste 'MagiKarpe' Deslaurier, Clément 'cLESE' Sebillet
 '''
 import logging
 
 def VerifTps(temps):
+    '''
+    Vérifie le temps de la playlist que a saisi l'utilisateur à l'appel de l'application 
+    @param temps : le temps de la playlist que a saisi l'utilisateur à l'appel de l'application 
+    '''
     #On va essayer de mettre le pourcentage en entier positif
     try:
         #Convertion du temps en entier

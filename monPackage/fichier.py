@@ -3,13 +3,19 @@
 '''
 Created on 4 nov. 2014
 
-@author: etudiant
+@author: Baptiste 'MagiKarpe' Deslaurier, Clément 'cLESE' Sebillet
 '''
 
 import io
 
     #Si l'extension du fichier est le m3u
 def creationFichierm3u(nom, ext, result):
+    '''
+    Fonction qui permet de generer une playlist au format m3u.
+    @param nom : Nom de la playlist.
+    @param ext : Format de la playlist.
+    @param result : Contient un ensemble de morceaux qui correspond a la demande de l'utilisateur.
+    '''
     fichier=io.open(nom + "." + ext,'w')
     #Parcours le résultat pour chaque ligne
     for row in result:
@@ -20,6 +26,12 @@ def creationFichierm3u(nom, ext, result):
 
     #Si l'extension du fichier est le xspf
 def creationFichierxpsf(nom, ext, result):
+    '''
+    Fonction qui permet de generer une playlist au format xspf.
+    @param nom : Nom de la playlist.
+    @param ext : Format de la playlist.
+    @param result : Contient un ensemble de morceaux qui correspond a la demande de l'utilisateur.
+    '''
     fichier=io.open(nom + "." + ext,'w')
     fichier.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
                        "<playlist version=\"1\" xmlns=\"http://xspf.org/ns/0/\">\n"+
@@ -39,6 +51,12 @@ def creationFichierxpsf(nom, ext, result):
 
     #Si l'extension du fichier est le pls
 def creationFichierpls(nom, ext, result):
+    '''
+    Fonction qui permet de generer une playlist au format pls.
+    @param nom : Nom de la playlist.
+    @param ext : Format de la playlist.
+    @param result : Contient un ensemble de morceaux qui correspond a la demande de l'utilisateur.
+    '''
     i=1
     fichier=io.open(nom + "." + ext,'w')
     fichier.write("[playlist]\n\n")

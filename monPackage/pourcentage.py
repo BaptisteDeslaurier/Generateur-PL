@@ -1,12 +1,17 @@
 '''
 Created on 8 oct. 2014
 
-@author: etudiant
+@author: Baptiste 'MagiKarpe' Deslaurier, Clément 'cLESE' Sebillet
 '''
 import logging
 
 #Fonction de vÃ©rification des poucentages
 def verifPourcentage(arg):
+    '''
+    Verifie si la quantite saisie pour un argument est un entier naturel.
+    @param arg : pourcentage saisie par l'utilisateur pour un argument.
+    @pct le nouveau pourcentage pour un argument.
+    '''
     #On va essayer de mettre le pourcentage en entier positif
     try:
         pct = abs(int(arg))
@@ -25,6 +30,10 @@ def verifPourcentage(arg):
 
 #Fonction de gestion des poucentages
 def gestionPctage(typeArg):
+    '''
+    Permet de gérer les pourcentage, avec la gestion de chaque pourcentage et de la somme de ces pourcentages.
+    @param typeArg : Argument optionnel qu'a saisi l'utilisateur.
+    '''
     i = 0
     ligneList = 1
     j = 0
