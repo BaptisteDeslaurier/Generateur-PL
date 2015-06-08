@@ -1,122 +1,53 @@
-'''
-Created on 18 nov. 2014
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
-@author: Baptiste 'MagiKarpe' Deslaurier, Cl�ment 'cLESE' Sebillet
 '''
+Created on 8 oct. 2014
+
+Connexion à la base Postgresql
+@author: Baptiste 'MagiKarpe' Deslaurier, Clément 'cLESE' Sebillet
+'''
+
 import sqlalchemy
-import random
-from monPackage.accesDB import table_morceaux, engine as connect
 
-#Définition d'une variable regroupant l'ensemble d'arguments pouvant être saisi par l'utilisateur
-argument_cli = ['genre','artiste','album','titre']
+#Création de la variable engine initialisé avec la connexion à la BDD
+engine = sqlalchemy.create_engine('postgresql://b.deslaurier:passe@172.16.99.2:5432/bdeslaurier/radio')
 
-#Définition de la playlist
-playlist =[]
+# la collection de métadonnées est stockée dans l'objet MetaData
+metadonnees = sqlalchemy.MetaData()
 
-#Fonction permettant de créer la requete et récupérer des données dans la BDD par rapport aux besoins de l'utilisateur
-def recupererDonnees(args):
-    '''
-    On recherche dans la base les morceaux correspondant � un argument et a sa valeur
-    @param args: ensemble des arguments possibles de la ligne de commande (ex: ('g', "genre"),('ar', "artiste"))
-    @param valeurRechercher:valeur saisie par l'utilisateur pour un argument (ex: Rock)
-    @param arg: l'argument pour lequel on recherche la valeur (ex: g)
-    '''
-    for attribut in argument_cli:
-        if getattr(args, attribut) is not None:
-            for argument in getattr(args, attribut):
-                #RecuperationDonnees va construire la requete
-                #Si l'utilisateur a saisi un ou plusieurs genres
-                if (attribut == 'genre'):
-                    RecuperationDonnees = sqlalchemy.select([table_morceaux]).where(table_morceaux.c.genre == argument[0])
-                #Si l'utilisateur a saisi un ou plusieurs artistes
-                if (attribut == 'artiste'):
-                    RecuperationDonnees = sqlalchemy.select([table_morceaux]).where(table_morceaux.c.artiste == argument[0])
-                #Si l'utilisateur a saisi un ou plusieurs albums
-                if (attribut == 'album'):
-                    RecuperationDonnees = sqlalchemy.select([table_morceaux]).where(table_morceaux.c.album == argument[0])
-                #Si l'utilisateur a saisi un ou plusieurs titres
-                if (attribut== 'titre'):
-                    RecuperationDonnees = sqlalchemy.select([table_morceaux]).where(table_morceaux.c.titre == argument[0])
+# récupère dans table_morceaux la structure de la table morceaux de la base de données
+table_morceaux = sqlalchemy.Table('morceaux',metadonnees,
+                                  sqlalchemy.Column('titre',sqlalchemy.String),
+                                  sqlalchemy.Column('album',sqlalchemy.String),
+                                  sqlalchemy.Column('artiste',sqlalchemy.Integer),
+                                  sqlalchemy.Column('genre',sqlalchemy.Integer),
+                                  sqlalchemy.Column('sousgenre',sqlalchemy.String),
+                                  sqlalchemy.Column('duree', sqlalchemy.Integer),
+                                  sqlalchemy.Column('format',sqlalchemy.String),
+                                  sqlalchemy.Column('polyphonie',sqlalchemy.Integer),
+                                  sqlalchemy.Column('chemin',sqlalchemy.String)
+                                  )
 
-                # connection à la BDD puis execution de la requète
-                recuperation = connect.execute(RecuperationDonnees)
-                #Insertion des données récuperées dans un list
-                recuperation = list(recuperation)
-                #Melange la musique dans la list
-                random.shuffle(recuperation)
+# récupère dans table_artiste la structure de la table artiste de la base de données
+table_artiste = sqlalchemy.Table('artiste',metadonnees,
+                                  sqlalchemy.Column('id',sqlalchemy.integer),
+                                  sqlalchemy.Column('libelle_first',sqlalchemy.String),
+                                  sqlalchemy.Column('libelle_second',sqlalchemy.String)
+                                  )
 
-                #Rajoute une liste au 3eme rang de la liste argument
-                argument.insert(2,[])
-                #Initialisation de la valeur i à 0 pour la prochaine boucle for
-                i=0
-                #Initialisation de la valeur durée à 0 pour connaitre la duée de la playlist en cours de création
-                duree = 0
+# récupère dans table_artiste la structure de la table genre de la base de données
+table_genre = sqlalchemy.Table('genre',metadonnees,
+                                  sqlalchemy.Column('id',sqlalchemy.integer),
+                                  sqlalchemy.Column('libelle_first',sqlalchemy.String),
+                                  sqlalchemy.Column('libelle_second',sqlalchemy.String)
+                                  )
 
-                #Boucle qui va permettre de combler la playlist s'l reste assez de temps pour une ou plusieurs musiques
-                for champBDD in recuperation:
-                    #Ajoute la durée de la musique à la durée de la playlist en cours de créationn
-                    duree += champBDD[5]
-                    #Si durée de la playlist en cours de création est inférieur à la durée demandé par utilisateur
-                    if(duree < argument[1]*60):
-                        #Insertion de la musique dans la playlist
-                        argument[2].insert(i, champBDD)
-                        i += 1
-                    #Sinon suppression de la durée de la musique anciennement ins
-                    else:
-                        duree -= champBDD[5]
+# s définit la requête à effectuer
+s = sqlalchemy.select([table_morceaux, table_artiste, table_genre])
 
+# défini conn qui établi la connection à la base de données
+conn = engine.connect()
 
-#Génération de la liste pour la playlist
-def generationPlaylist(args):
-    '''
-    G�n�ration de la playlist
-    @param args : 
-    '''
-    i = 0
-    for attribut in argument_cli:
-        if getattr(args, attribut) is not None:
-            for argument in getattr(args, attribut):
-                # Pour chaque musique dans la playlist on insére le titre, l'artiste, l'album, le format et le chemin
-                for musique in argument[2]:
-                    playlist.insert(i, [musique[0], musique[2], musique[1], musique[5], musique[8]])
-                    i += 1
-    #Mélange les musiques aléatoirement
-    random.shuffle(playlist)
-
-def Playlist(args):
-    '''
-    Cr�ation de la playlist avec les musique trouv� dans la BDD
-    @param args : 
-    @playlist est la playlist cr�er avec les morceaux � chaque ligne sans format de fichier encore
-    '''
-    #Définition de la duree en cours de la playlist généré et initialisation à 0
-    duree = 0
-    #Pour chaque ligne de playlist on va ajouter le temps de la musique à la duree
-    for musique in playlist:
-        duree += musique[3]
-
-#Si la duree de la musique est inférieur à la durée demandée par l'utilisateur,
-#une requête va permettre d'aller chercher des musiques alétoirement dans la BDD
-    if(duree < args.temps*60):
-        select_morceaux = sqlalchemy.select([table_morceaux])
-        resultat = connect.execute(select_morceaux)
-        resultat = list(resultat)
-        random.shuffle(resultat)
-
-    #Initialisation de i au nombre de ligne de la liste playlist
-    i=len(playlist)
-
-    #Pour chaque ligne de résultat
-    for musique in resultat:
-        #Ajout de a la durée de la ligne (musique) à la durée de la playlist en cours de création
-        duree += musique[5]
-        #Si la durée de la playlist en cours de création, on va insérer la ligne dans la liste playlist
-        if(duree < args.temps*60):
-            playlist.insert(i, [musique[0], musique[2], musique[1], musique[5], musique[8]])
-            i += 1
-        #Sinon on enlève la durée de la ligne à la durée de la playlist en cours de création
-        else:
-            duree -= musique[5]
-
-    #On va retourner la playlist créée
-    return playlist
+# result est la variable qui reçoit la liste des musiques
+result = conn.execute(s)
